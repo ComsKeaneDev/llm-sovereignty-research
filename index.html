@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Edward Clark">
+  <meta name="description"
+    content="Research findings on LLM Sovereignty Within Disability Communication by Edward Clark and Kyle Keane.">
+  <title>LLM Sovereignty Within Disability Communication</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    header.container {
+      padding-top: 3rem;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-container {
+      flex-shrink: 0;
+    }
+
+    .logo-container img {
+      height: 80px;
+      width: auto;
+    }
+
+    .title-container {
+      flex-grow: 1;
+    }
+
+    .title-container h1 {
+      margin: 0;
+      margin-top: -0.5rem;
+    }
+
+    .title-container p {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .logo-container img {
+        height: 60px;
+      }
+    }
+
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    details {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background-color: var(--pico-card-background-color);
+      border-radius: var(--pico-border-radius);
+      border: 1px solid var(--pico-muted-border-color);
+    }
+
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    figure {
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    figure img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--pico-border-radius);
+      box-shadow: var(--pico-card-box-shadow);
+    }
+
+    hr {
+      margin-top: 4rem;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="container">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="images/logo.png" alt="University of Bristol Logo">
+      </div>
+      <div class="title-container">
+        <h1>LLM Sovereignty Within Disability Communication</h1>
+      </div>
+    </div>
+    <p><strong>Assessing the risk of communicating government disability policy through LLM
+        summarisation </br></strong>by Edward Clark and Kyle Keane</p>
+    <blockquote>This research project is still in its very early stages. The results are preliminary and I have plans to
+      dive much deeper into each section.</blockquote>
+  </header>
+
+  <main class="container">
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>As growing numbers of people rely on LLMs to query or summarise government policy documents, it is important
+        that we understand the impact of filtering these essential documents through models which are created by a
+        handful of companies in a handful of nation states. For example, the UK Government's Personal Independence
+        Payment (PIP) assessment guidelines are extremely long and dense. LLM summarisation could make parsing these
+        documents much easier for a blind user, but the linguistic impact is yet unmeasured.</p>
+    </section>
+
+    <hr />
+
+    <section id="dataset">
+      <p><kbd>DATASET & MODELS</kbd></p>
+      <h2>What did I experiment on?</h2>
+      <p>The source government documents are:</p>
+      <ul>
+        <li>PIP assessment guide part 1: the assessment process (UK Government)</li>
+        <li>PIP assessment guide part 2: the assessment criteria (UK Government)</li>
+        <li>PIP assessment guide part 3: health professional performance (UK Government)</li>
+        <li>Housing Benefit subsidy guidance manual 2024 to 2025 (UK Government)</li>
+        <li>Disability Confident Reform Delivery Plan for December 2025 to December 2026 (UK Government)</li>
+      </ul>
+      <p>This comes to roughly 75,000 words or 450,000 characters. Each LLM company uses different tokenisers, but I
+        split the documents into chunks of roughly 1,000 tokens, keeping sentences whole.</p>
+
+      <p>I have initially chosen to compare <strong>OpenAI's GPT 4.1 Mini 🇺🇸</strong> with <strong>Mistral's Mistral
+          Large 3 🇪🇺</strong>. I chose these models as they have similar performance across a range of existing
+        benchmarks:</p>
+
+      <table role="table">
+        <caption>LLM Performance Benchmarks Comparison</caption>
+        <thead>
+          <tr>
+            <th scope="col">LLM Metric</th>
+            <th scope="col">Mistral Large 3</th>
+            <th scope="col">GPT-4.1 mini</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GDPval-AA (Agentic Work)</td>
+            <td>21%</td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td>Terminal-Bench Hard</td>
+            <td>16%</td>
+            <td>8%</td>
+          </tr>
+          <tr>
+            <td>Tau Squared-Bench Telecom</td>
+            <td>25%</td>
+            <td>53%</td>
+          </tr>
+          <tr>
+            <td>AA-LCR (Reasoning)</td>
+            <td>35%</td>
+            <td>42%</td>
+          </tr>
+          <tr>
+            <td>AA-Omniscience Accuracy</td>
+            <td>24%</td>
+            <td>19%</td>
+          </tr>
+          <tr>
+            <td>Non-Hallucination Rate</td>
+            <td>15%</td>
+            <td>8%</td>
+          </tr>
+          <tr>
+            <td>Humanity's Last Exam</td>
+            <td>4.1%</td>
+            <td>4.6%</td>
+          </tr>
+          <tr>
+            <td>GPQA Diamond (Reasoning)</td>
+            <td>68%</td>
+            <td>66%</td>
+          </tr>
+          <tr>
+            <td>SciCode</td>
+            <td>36%</td>
+            <td>40%</td>
+          </tr>
+          <tr>
+            <td>IFBench (Following)</td>
+            <td>36%</td>
+            <td>38%</td>
+          </tr>
+          <tr>
+            <td>MMMU Pro (Reasoning)</td>
+            <td>56%</td>
+            <td>59%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>What next? </strong><br />
+        I'd like to introduce some Chinese models 🇨🇳, expand my dataset, and run my experiments on a selection of
+        different models in each region.</p>
+    </section>
+
+    <hr>
+
+    <section id="part-a">
+      <p><kbd>PART A</kbd></p>
+      <h2>Do LLMs infantilise people with disabilities?</h2>
+      <p>I used reading ease metrics (Flesch Kincaid Grade, Smog Index, and Gunning Fog) and lexical diversity metrics
+        (Hypergeometric Distribution D, and Moving Average TTR) to test whether the LLMs were "dumbing down" summaries
+        after being told they were generating them for a physically disabled person. I generated summaries for each
+        chunk of government text, using the OpenAI 🇺🇸 and Mistral 🇪🇺 models, with prompts that told the LLM the
+        summary was for a "blind person", "physically disabled person", "disabled person", and with no specification.
+      </p>
+
+      <figure>
+        <img src="images/language.png"
+          alt="Scatter plot showing change in readability versus lexical diversity for OpenAI and Mistral models across different disability personas" />
+        <figcaption>Figure 1: Change in readability vs. lexical diversity by persona.</figcaption>
+      </figure>
+
+      <p>The graph above is a scatter plot. The x-axis shows the change in readability (using the mean of the three
+        readability metrics) and the y-axis shows the change in lexical diversity (using Hypergeometric Distribution D).
+        Only the "physically disabled" and "disabled" personas are plotted as a Wilcoxon test showed the "blind" persona
+        to not be significantly different to the persona-less prompt. The graph shows both OpenAI and Mistral summaries
+        to be easier to read when prompted with disabled personas. This would likely be beneficial to users of screen
+        readers. However, the graph shows OpenAI decreasing the lexical diversity for "physically disabled" users and
+        further decreasing it for "disabled" users. In contrast, Mistral slightly increases the lexical diversity for
+        the disabled personas. This finding raises concerns that OpenAI models might be "dumbing down" summaries
+        intended for people with physical disabilities. This warrants further investigation.</p>
+
+      <p><strong>What next?</strong><br>I would like to investigate metrics, other than lexical diversity, to see
+        whether the LLMs really are "dumbing down" their responses or just tailoring them to be more accessible whilst
+        conveying the same information. I would also like to test personas that have a range of different physical
+        disabilities.</p>
+
+      <details>
+        <summary>View Statistical Analysis (Part A)</summary>
+
+        <h4>GPT-4.1 Mini Analysis (Generic vs Physically Disabled)</h4>
+        <table role="table">
+          <caption>Statistical comparison of GPT-4.1 Mini summaries for generic versus physically disabled personas
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.22</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.15</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.40</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>0.0045</td>
+              <td>0.33</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>0.0080</td>
+              <td>0.31</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>GPT-4.1 Mini Analysis (Generic vs Disabled)</h4>
+        <table role="table">
+          <caption>Statistical comparison of GPT-4.1 Mini summaries for generic versus disabled personas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.57</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.66</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>1.82</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.55</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.55</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>GPT-4.1 Mini Analysis (Generic vs Blind)</h4>
+        <table role="table">
+          <caption>Statistical comparison of GPT-4.1 Mini summaries for generic versus blind personas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Wilcoxon</td>
+              <td>&lt; 0.001</td>
+              <td>0.81</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.76</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Wilcoxon</td>
+              <td>&lt; 0.001</td>
+              <td>0.91</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>0.5774</td>
+              <td>0.06</td>
+              <td>Lower</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>0.4476</td>
+              <td>0.09</td>
+              <td>Lower</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Mistral Large 3 Analysis (Generic vs Physically Disabled)</h4>
+        <table role="table">
+          <caption>Statistical comparison of Mistral Large 3 summaries for generic versus physically disabled personas
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.53</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.48</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.52</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>0.0405</td>
+              <td>0.24</td>
+              <td>Higher</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>0.0146</td>
+              <td>0.28</td>
+              <td>Higher</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Mistral Large 3 Analysis (Generic vs Disabled)</h4>
+        <table role="table">
+          <caption>Statistical comparison of Mistral Large 3 summaries for generic versus disabled personas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.69</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.65</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.68</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.45</td>
+              <td>Higher</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>0.0014</td>
+              <td>0.38</td>
+              <td>Higher</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Mistral Large 3 Analysis (Generic vs Blind)</h4>
+        <table role="table">
+          <caption>Statistical comparison of Mistral Large 3 summaries for generic versus blind personas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col">Test</th>
+              <th scope="col">P-Value</th>
+              <th scope="col">Effect Size (d)</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flesch Kincaid Grade</td>
+              <td>Wilcoxon</td>
+              <td>&lt; 0.001</td>
+              <td>0.51</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Smog Index</td>
+              <td>Wilcoxon</td>
+              <td>&lt; 0.001</td>
+              <td>0.47</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Gunning Fog</td>
+              <td>Paired T-Test</td>
+              <td>&lt; 0.001</td>
+              <td>0.50</td>
+              <td>Lower</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Hypergeometric Distribution D</td>
+              <td>Paired T-Test</td>
+              <td>0.7807</td>
+              <td>0.03</td>
+              <td>Higher</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Moving Average TTR</td>
+              <td>Paired T-Test</td>
+              <td>0.2778</td>
+              <td>0.12</td>
+              <td>Higher</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><small>Note: Both models improve readability across all personas. However, GPT-4.1 Mini significantly reduces
+            lexical diversity for "physically disabled" and "disabled" personas, while Mistral Large 3 increases it. The
+            "blind" persona shows no significant difference in lexical diversity for both models.</small></p>
+      </details>
+    </section>
+
+    <hr>
+
+    <section id="part-b">
+      <p><kbd>PART B</kbd></p>
+      <h2>To what extent do the LLMs "Americanise" their summaries?</h2>
+      <p>Sovereignty in AI is often discussed regarding citizen privacy. However, I believe cultural sovereignty is
+        equally important. If the UK government is going to use LLMs to convey policy, or disabled citizens are going to
+        use LLM summarisation in assistive technologies, we need to understand how the linguistics of the text people
+        consume are changing.</p>
+
+      <p>I chose spelling as a high-level metric to prove this area warrants further investigation. All the source texts
+        are from the UK government so all American spellings in the summaries are hallucinations.</p>
+
+      <figure>
+        <img src="images/spelling.png"
+          alt="Bar chart comparing percentage of US spellings used by OpenAI and Mistral across four personas" />
+        <figcaption>Figure 2: Percentage of US Spellings in Summary of UK Government Reports.</figcaption>
+      </figure>
+
+      <p>The bar chart titled "US Spellings in Summary of UK Government Reports" compares the percentage of American
+        spellings (out of words that have different spellings) used by both models across the four personas: "blind",
+        "physically disabled", "disabled, and no persona/generic baseline.</p>
+
+      <p>The chart shows Mistral consistently selecting the American English spelling around 72% (+/- 5%) of the time
+        across all personas. Unexpectedly, OpenAI starts at 96.4% but decreases its percentage as the personas go on,
+        finishing at only 70% for the "disabled" persona. This suggests that the training data related to disability in
+        the American model may be heavily sourced from European medical or accessibility literature.</p>
+
+      <p>Though Mistral was better than OpenAI, it is far from perfect. Neither model respected the sovereign dialect of
+        the source text. While Mistral is statistically "less American" than OpenAI, a 66.7% rate of Americanisms in a
+        UK government summary is still a failure of localisation. This supports the argument that even European models
+        are heavily reliant on a US-dominated training set.</p>
+
+      <blockquote>
+        <p><strong>Date Formatting Example</strong></p>
+        <p><strong>Source:</strong> "In England from <strong>1 April 2020</strong>, where rent set by the LA is not
+          compliant with the Rent Standard, LAs must assess…"</p>
+        <p><strong>Summary:</strong> "From <strong>April 1, 2020</strong>, in England, if the rent set by the Local
+          Authority (LA) doesn't comply with the Rent Standard, the LA must…"</p>
+        <p><small>A manual search of the summaries, found several cases where dates had been rearranged to use the
+            American standard instead of the international standard. This cherry-picked example does not cause
+            confusion; it is only a stylistic mistake, but a swap from DD/MM/YYYY to MM/DD/YYYY could cause serious
+            confusion, and even lead to vulnerable people missing deadlines for essential support applications.</small>
+        </p>
+      </blockquote>
+
+      <p><strong>What next?</strong><br>I plan to explore differences in terminology and colonisation of institutions,
+        as well as run specific experiments on summaries that include numerically formatted dates. Investigation into
+        Chinese models will also have an interesting impact on my conclusions and it could also be beneficial to attempt
+        to fine-tune a model to satisfy these metrics better.</p>
+
+      <details>
+        <summary>View Statistical Analysis (Part B)</summary>
+
+        <table role="table">
+          <caption>US Spelling Percentage by Model and Persona</caption>
+          <thead>
+            <tr>
+              <th scope="col">Model</th>
+              <th scope="col">Persona</th>
+              <th scope="col">US Spelling %</th>
+              <th scope="col">Sample Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GPT-4.1 Mini</td>
+              <td>Generic</td>
+              <td>96.4%</td>
+              <td>55 words</td>
+            </tr>
+            <tr>
+              <td>GPT-4.1 Mini</td>
+              <td>Physically Disabled</td>
+              <td>70.0%</td>
+              <td>30 words</td>
+            </tr>
+            <tr>
+              <td>GPT-4.1 Mini</td>
+              <td>Disabled</td>
+              <td>70.0%</td>
+              <td>30 words</td>
+            </tr>
+            <tr>
+              <td>GPT-4.1 Mini</td>
+              <td>Blind</td>
+              <td>82.6%</td>
+              <td>46 words</td>
+            </tr>
+            <tr>
+              <td>GPT-4.1 Mini</td>
+              <td><strong>Combined</strong></td>
+              <td><strong>82.6%</strong></td>
+              <td><strong>161 words</strong></td>
+            </tr>
+            <tr>
+              <td>Mistral Large 3</td>
+              <td>Generic</td>
+              <td>66.7%</td>
+              <td>51 words</td>
+            </tr>
+            <tr>
+              <td>Mistral Large 3</td>
+              <td>Physically Disabled</td>
+              <td>75.0%</td>
+              <td>52 words</td>
+            </tr>
+            <tr>
+              <td>Mistral Large 3</td>
+              <td>Disabled</td>
+              <td>72.9%</td>
+              <td>48 words</td>
+            </tr>
+            <tr>
+              <td>Mistral Large 3</td>
+              <td>Blind</td>
+              <td>75.9%</td>
+              <td>58 words</td>
+            </tr>
+            <tr>
+              <td>Mistral Large 3</td>
+              <td><strong>Combined</strong></td>
+              <td><strong>72.7%</strong></td>
+              <td><strong>209 words</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>Chi-Squared Statistic:</strong> 4.4753 (P-Value: 0.034388). The difference in US spelling usage
+          between models IS statistically significant.</p>
+      </details>
+    </section>
+
+    <hr>
+
+    <section id="part-c">
+      <p><kbd>PART C</kbd></p>
+      <h2>Do LLMs understand national values or do they rely on citizen caricatures?</h2>
+      <p>To test this, I utilised the British Election Study (BES) Internet Panel. I created 400 unique personas based
+        on real survey respondents, including their age, ethnicity, income, and voting history (2014 General Election,
+        EU Referendum, etc). I then asked both models to answer the survey as if they were those people. I measured the
+        Mean Absolute Error between the real human's answer (normalised 0-1) and the model's answer. A lower MAE
+        indicates the AI more accurately mimicked the respondent.</p>
+
+      <figure>
+        <img src="images/british_persona_impersonation_tug_of_war.png"
+          alt="Tug-of-war chart showing mean absolute error comparison between OpenAI and Mistral across domestic, economy, global, and social question categories" />
+        <figcaption>Figure 3: Mean Absolute Error by category (Lower is better).</figcaption>
+      </figure>
+
+      <p>The tug-of-war chart above visualises the mean absolute error broken down by category (domestic, economy,
+        global, and social). For domestic and social, it shows Mistral having a lower MAE, but for economy and global,
+        it shows OpenAI having a lower MAE. Overall, there was no statistically significant winner, but there are clear
+        winners when you look at the per category data.</p>
+
+      <p>The hypothesis that a European model would mimic all British respondents better is false. However, Mistral does
+        perform better on domestic and social issues, like devolution, culture wars, and sentiment on local topics. The
+        average error rate of 23% shows that both LLMs do have a broad understanding of British demographic data but
+        fail to interpret the full range of opinions present in the real world.</p>
+
+      <p><strong>What next?</strong><br>This section had a lot of potential for deeper analysis. I would like to
+        identify
+        which demographic groups the LLMs struggle with most. I'd also like to investigate how the addition of physical
+        disabilities to demographics alters the quality of impersonation.</p>
+
+      <details>
+        <summary>View Statistical Analysis (Part C)</summary>
+
+        <table role="table">
+          <caption>Mean Absolute Error (Lower is better)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">OpenAI MAE</th>
+              <th scope="col">Mistral MAE</th>
+              <th scope="col">Winner</th>
+              <th scope="col">Wilcoxon P-Value</th>
+              <th scope="col">Significant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>All Questions</td>
+              <td>0.2295</td>
+              <td>0.2297</td>
+              <td>OpenAI</td>
+              <td>0.252</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Domestic</td>
+              <td>0.2418</td>
+              <td>0.2267</td>
+              <td>Mistral</td>
+              <td>&lt; 0.001</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Economy</td>
+              <td>0.2130</td>
+              <td>0.2246</td>
+              <td>OpenAI</td>
+              <td>&lt; 0.001</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Global</td>
+              <td>0.2208</td>
+              <td>0.2337</td>
+              <td>OpenAI</td>
+              <td>0.005</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Social</td>
+              <td>0.2431</td>
+              <td>0.2364</td>
+              <td>Mistral</td>
+              <td>0.008</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><small>Note: While overall performance is nearly identical (not significant), Mistral significantly
+            outperforms on Domestic and Social issues, while OpenAI significantly outperforms on Economy and Global
+            issues.</small></p>
+      </details>
+    </section>
+
+    <hr>
+
+    <section id="conclusion">
+      <p><kbd>CONCLUSION</kbd></p>
+      <h2>Does any LLM offer true linguistic sovereignty for communication about disability in the UK?</h2>
+      <p>This ongoing research project intends to determine whether governments around the world compromise their
+        sovereignty or duty of care to disabled citizens by relying on US-centric Large Language Models. It also aims to
+        make recommendations to people that rely on assistive technologies as to how they can protect themselves.</p>
+
+      <p>Simple linguistic metrics show there is a risk of infantilisation when using the current American models for
+        communication about accessibility. When summarising for a physically disabled user, OpenAI's GPT-4.1 Mini
+        significantly lowered the lexical diversity of the text, effectively "dumbing it down." In contrast, Mistral
+        Large 3, increased the lexical diversity (d=0.24) while still improving readability. For government services,
+        the European model demonstrated a more respectful tone that assumes physical disability does not equate to
+        cognitive impairment.</p>
+
+      <p>Currently, neither American nor European models offer true linguistic sovereignty for the UK. OpenAI overwrote
+        UK government English with US spellings 96.4% of the time. Mistral did so 66.7% of the time. Deploying either
+        model without significant fine-tuning will result in the erosion of British English. Could the spelling be a
+        high-level signal of deeper ideological bias? Further investigation is needed.</p>
+
+      <p>OpenAI and Mistral are equally bad at impersonating British citizens, just in different ways. OpenAI
+        understands economic and geopolitical opinions, whereas Mistral understands domestic and social views better. A
+        pan-European
+        model is not a silver bullet for cultural alignment to national identities. It is worth noting that this project
+        investigates the UK as a whole and did not separate the individual home nations and their distinct identities.
+      </p>
+
+      <p>The data suggests that the UK Government cannot simply "buy European" to solve the sovereignty issue. While
+        Mistral offers advantages in tone (less infantilisation) and slightly better spelling, it is still
+        based on a US-dominated training set. To ensure sovereign communication, the government should invest in
+        fine-tuning open-weight models on a high-quality, diverse dataset of British texts. Relying on off-the-shelf
+        models introduces unacceptable cultural and linguistic bias.</p>
+
+      <p>For individuals who rely on assistive tools, the data suggests they must be wary of the output of any LLMs -
+        both for individual hallucinations but also the greater ideological impact of passing a large proportion of
+        their text consumption through an inherently biased filter. Until this impact can be further investigated, I
+        recommend
+        only using tools that allow you to alter the prompt to place your own guardrails.</p>
+    </section>
+
+    <section id="contact">
+      <hr>
+      <p><kbd>CONTACT</kbd></p>
+      <h2>We'd love to hear what you think.</h2>
+      <p>This research project is still in its infancy. We'd be very grateful for any thoughts, opinions, and
+        recommendations of any size. Please email <a
+          href="mailto:edward.clark@bristol.ac.uk">edward.clark@bristol.ac.uk</a>. We'd love to hear from anyone who
+        read
+        the preliminary findings.</p>
+      <p><small>University of Bristol</small></p>
+    </section>
+
+  </main>
+
+
+
+</body>
+
+</html>
